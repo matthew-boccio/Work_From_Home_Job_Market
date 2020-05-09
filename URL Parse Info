@@ -1,0 +1,61 @@
+INDEED SCRAPE PREP:
+- 15 entries per page, 100 page max (for those with 1500+ entries): so 1500 per Filter
+- With remote as an entry, plus 13 major cities, I should have roughly 12,000 entries
+- However I can DOUBLE this by adjusting my filters - one sorted by relevance, another sorted by date
+
+if total jobs bigger than 1500: scrape 100 pages
+if total jobs less than 1500: scrape (# of jobs / 15)
+
+- Title cards include:
+-- Job Title
+-- Company
+-- City or town it's located in
+-- Salary (sometimes)
+-- Whether it's remote (in this case because of filter, almost always yes)
+-- Beginning of Job summary
+
+- Full job page after clicking title card includes:
+-- Job Title
+-- Company
+-- City or town it's located in
+-- Salary
+-- Job type (full time, part time, contract, etc) (sometimes)
+-- Remote or not (may include '(temporarily available, Covid-19)')
+-- How responsive they are (optional)
+-- Big inconsistent text block including:
+--- Job Summary
+--- Experience required
+--- Skills required
+--- Education required
+--- Job Responsibilities
+--- Location desired
+--- Languages desired
+
+
+URL PARSING (no location filter):
+https://www.indeed.com/jobs?q&l=United%20States&sort=date&remotejob=1&vjk=875c019d55558f57
+https://www.indeed.com/jobs?q&l=United%20States&sort=date&remotejob=1&start=10&vjk=62285ef1f82ae60e
+https://www.indeed.com/jobs?q&l=United%20States&sort=date&remotejob=1&start=20&vjk=af533dae0f6d5ae9
+https://www.indeed.com/jobs?q&l=United%20States&sort=date&remotejob=1&start=30&vjk=0e0f5c925ef945fa
+
+BASE (No Location Filter): https://www.indeed.com/jobs?q&l=United%20States&sort=date&remotejob=1
+BASE (No Location Filter AND Sorted by Relevance, not Date): https://www.indeed.com/jobs?q&l=United%20States&remotejob=1
+EACH PAGE: &start=10 (or each multiple of 10. 1st page, start = 0)
+EACH LISTING: &vjk=62285ef1f82ae60e (vjk = random string of digits and letters)
+SOMETIMES AFTER LISTING: &advn=7033457933754150 (advn = random string of numbers. could be paid post?)
+
+LOCATION FILTERS:
+Just Remote: https://www.indeed.com/jobs?l=United%20States&rbl=Remote&jlid=aaa2b906602aa8f5&sort=date&remotejob=1......
+New York, NY: https://www.indeed.com/jobs?l=United%20States&rbl=New%20York%2C%20NY&jlid=45f6c4ded55c00bf&sort=date&remotejob=1........
+Chicago, IL: https://www.indeed.com/jobs?l=United%20States&rbl=Chicago%2C%20IL&jlid=402d6ad50e16c894&sort=date&remotejob=1.......
+Washington DC: https://www.indeed.com/jobs?l=United%20States&rbl=Washington%2C%20DC&jlid=c08ec92d8c031faa&sort=date&remotejob=1......
+Los Angeles CA: https://www.indeed.com/jobs?l=United%20States&rbl=Los%20Angeles%2C%20CA&jlid=d05a4fe50c5af0a8&sort=date&remotejob=1......
+Austin TX: https://www.indeed.com/jobs?l=United%20States&rbl=Austin%2C%20TX&jlid=d2a39b6d57d82344&sort=date&remotejob=1.....
+Atlanta, GA: https://www.indeed.com/jobs?l=United%20States&rbl=Atlanta%2C%20GA&jlid=966e6327a98f7e81&sort=date&remotejob=1......
+Houston, TX: https://www.indeed.com/jobs?l=United%20States&rbl=Houston%2C%20TX&jlid=fcd454bec6232f93&sort=date&remotejob=1......
+San Francisco, CA: https://www.indeed.com/jobs?l=United%20States&rbl=San%20Francisco%2C%20CA&jlid=6cf5e6d389fd6d6b&sort=date&remotejob=1......
+Dallas TX: https://www.indeed.com/jobs?l=United%20States&rbl=Dallas%2C%20TX&jlid=c9b29a6e6a9f190c&sort=date&remotejob=1......
+Boston, MA: https://www.indeed.com/jobs?l=United%20States&rbl=Boston%2C%20MA&jlid=e167aeb8a259bcac&sort=date&remotejob=1......
+Phoenix, AZ: https://www.indeed.com/jobs?l=United%20States&rbl=Phoenix%2C%20AZ&jlid=b4ff2ac66b411fd8&sort=date&remotejob=1.....
+Denver, CO: https://www.indeed.com/jobs?l=United%20States&rbl=Denver%2C%20CO&jlid=3ff9c6509d39a5e5&sort=date&remotejob=1.....
+Philadelphia, PA: https://www.indeed.com/jobs?l=United%20States&rbl=Philadelphia%2C%20PA&jlid=f6285c85bb4a85b4&sort=date&remotejob=1.....

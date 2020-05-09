@@ -1,0 +1,73 @@
+#scrapy shell -s USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36" "https://www.indeed.com/jobs?l=United%20States&sort=date&remotejob=1&start=0&vjk=2ca9343604465ef3"
+
+# spider_instance = IndeedSpider()
+#
+# for url in start_urls:
+#     spider_instance.parse(Request(url = url))
+
+#extract job number, more than 1000 jobs:
+
+num_jobs = int(response.xpath('//div[@id="searchCountPages"]/text()').extract_first().strip().split(' ')[-2].replace(',',''))
+items_per_page = 15
+num_pages = num_jobs/items_per_page
+
+#extract job number, less than 1000 jobs:
+num_jobs = int(response.xpath('//div[@id="searchCountPages"]/text()').extract_first().strip().split(' ')[-2])
+items_per_page = 15
+num_pages = num_jobs/items_per_page
+
+
+#number of pages based on job number (for those less than 1500 jobs):
+page_number = num_jobs / 15
+page_entry_in_url = (page_number * 10) - 10 #now for page URL we combine /15 and *10 to do /1.5, and we don't need a -10 because of zero indexing
+page_urls = [f'https://www.indeed.com/jobs?q&l=United%20States&sort=date&remotejob=1&start={i}' for i in range(0, math.ceil(num_jobs/1.5), 10)]
+
+#get links to click card:
+response.xpath('//h2[@class="title"]/a/@href').extract()
+#using "len" on this returns 15
+
+#get job title:
+response.xpath('//h3[@class="icl-u-xs-mb--xs icl-u-xs-mt--none jobsearch-JobInfoHeader-title"]/text()').extract()
+#rule of thumb: if you want item as list, use extract. if you want item as string, use extract_first
+
+#get compamny name:
+response.xpath('//div[@class="icl-u-lg-mr--sm icl-u-xs-mr--xs"]/a/text()').extract()
+
+#get review out of 5 stars:
+int(response.xpath('//div[@class="icl-Ratings icl-Ratings--gold icl-Ratings--sm"]/meta/@content').extract()[0])
+
+#get number of reviews:
+int(response.xpath('//div[@class="icl-Ratings icl-Ratings--gold icl-Ratings--sm"]/meta/@content').extract()[1])
+
+#get state:
+response.xpath('//div[@class="jobsearch-InlineCompanyRating icl-u-xs-mt--xs  jobsearch-DesktopStickyContainer-companyrating"]/div').extract()[-1].replace('<div>', '').replace('</div>', '')
+
+#get remote or not:
+response.xpath('//div[@class="icl-u-xs-mt--xs icl-u-textColor--secondary jobsearch-JobInfoHeader-subtitle jobsearch-DesktopStickyContainer-subtitle"]/div').extract()[-1].replace('<div>', '').replace('</div>', '')
+#item['remote'] = remote
+
+
+#get time or day posted:
+response.xpath('//div[@class="jobsearch-JobMetadataFooter"]/text()').extract_first().replace(' - ', '')
+#make sure to have a definition for "just posted" and a time frame of reference for "today", "yesterday", "2 days ago", etc.
+#like you need to reference these to an actual day (probably 5/9/2020, the day you'll do the bulk of your scraping)
+
+#get salary:
+response.xpath('//span[@class="icl-u-xs-mr--xs"]/text()').extract_first()
+#leaving the text in there so that we can initially distinguish between hourly, weekly, monthly, yearly ranges
+#once actually exported, then clean the data to reflect yearly wages, while also retaining the pay duration in a seperate category for analysis
+
+#get job type:
+response.xpath('//span[@class="jobsearch-JobMetadataHeader-item  icl-u-xs-mt--xs"]/text()').extract_first()
+#clean this up after extraction, random entries have a weird text block precursor
+
+#get base text:
+str(response.xpath('//div[@class="jobsearch-jobDescriptionText"]/text()').extract()).replace('\\n', '')
+#looks like list, is string
+#does everything that is NOT INDENTED BY BULLET POINTS
+
+#get headers for requirements:
+response.xpath('//div[@class="jobsearch-jobDescriptionText"]/b/text()').extract()
+
+#get bullet points of requirements:
+response.xpath('//div[@class="jobsearch-jobDescriptionText"]/ul/li/text()').extract()

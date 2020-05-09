@@ -1,0 +1,41 @@
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from db import Review
+import time
+import re
+
+driver = webdriver.Chrome(r'C:\Users\matth\Desktop\chromedriver.exe')
+
+driver.get('https://www.indeed.com/jobs?l=United%20States&sort=date&remotejob=1&vjk=38a6f05666069551')
+
+job_description = driver.find_element_by_xpath('//class="jobsearch-SerpJobCard unifiedRow row result clickcard"')
+job_description.click()
+
+index = 1
+
+while index <= 2:
+    try:
+        print("Scraping page number ") + str(index))
+        index = index + 1
+
+        summary = driver.find_elements_by_xpath('//div id="vjs-header"')
+
+        for item in summary:
+            summary_dict = {}
+            try:
+                job_title = summary.find_element_by_xpath('//div id="vjs-jobtitle"').text
+                company_name = summary.find_element_by_xpath()'//a href'
+            except:
+                continue
+        print('Job Title = {}'.format(job_title))
+
+
+
+
+
+    except Exception as e:
+        print(e)
+        driver.close()
+        break
